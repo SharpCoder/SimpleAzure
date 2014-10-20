@@ -4,14 +4,14 @@ The project aims to streamline the azure simple storage library by providing gen
 ## Connection String
 The first thing you need to do is change the connection string. It is recommended that you use project settings instead of a const string. But for simplicity, you can simply change the following line (first line of code in the AzureHelper.cs file).
 
-''''C#
+'''csharp
 private static string AzureConnectionString = "UPDATE_CONNECTION_STRING_HERE";
-''''
+'''
 
 ## Using
 Once you've updated the connection string, you're now ready to integrate the simple storage. Create a new class in the following structure and you're done!
 
-''''C#
+'''csharp
 public class SampleClass : TableEntity
 {
 	const string AZURE_TABLE = "SampleTable";
@@ -47,4 +47,4 @@ public class SampleClass : TableEntity
 		return AzureHelper.Retrieve<SampleClass>(AZURE_TABLE, rowkey, rowkey);
 	}
 }
-''''
+'''
