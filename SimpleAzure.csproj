@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="AzureHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SampleClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

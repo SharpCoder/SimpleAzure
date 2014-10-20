@@ -42,6 +42,73 @@ namespace SimpleAzure
             return rows.ToList();
         }
 
+        internal static List<T> GetList<T>(string tableName, string partitionKey)
+            where T : ITableEntity, new()
+        {
+            // Get the table.
+            var tableClient = GetTableClient();
+            var table = tableClient.GetTableReference(tableName);
+
+            // Validate the table.
+            table.CreateIfNotExists();
+
+            // Create the operation.
+            var rows = (from t in table.CreateQuery<T>()
+                        where t.PartitionKey == partitionKey
+                        select t);
+
+            // Return the data.
+            return rows.ToList();
+        }
+
+        internal static int GetCount(string tableName, string partitionKey)
+        {
+            // Get the table.
+            var tableClient = GetTableClient();
+            var table = tableClient.GetTableReference(tableName);
+
+            // Validate the table.
+            table.CreateIfNotExists();
+
+            // Create the query.
+            var q = new TableQuery();
+
+            // Keep the return small.
+            q.Select(new List<string> { "RowKey" });
+            var list = table.ExecuteQuery(q);
+
+            // Only snag the count.
+            return list.Count();
+        }
+
+        internal static int GetFilterCount<T>(string tableName, string partitionKey, Func<T, bool> query)
+            where T : TableEntity, new()
+        {
+            // Get the table.
+            var tableClient = GetTableClient();
+            var table = tableClient.GetTableReference(tableName);
+
+            // Validate the table.
+            table.CreateIfNotExists();
+
+            // Create the query.
+            return table.CreateQuery<T>().Where(query).Count();
+        }
+
+        internal static List<T> Filter<T>(string tableName, Func<T, bool> query)
+            where T : TableEntity, new()
+        {
+            // Get the table.
+            var tableClient = GetTableClient();
+            var table = tableClient.GetTableReference(tableName);
+
+            // Validate the table.
+            table.CreateIfNotExists();
+
+            // Create the operation.
+            return table.CreateQuery<T>().Where(query).ToList<T>();
+        }
+
         internal static List<T> Filter<T>(string tableName, string partitionKey, string property, string value)
             where T : TableEntity, new()
         {
@@ -57,7 +124,7 @@ namespace SimpleAzure
             table.CreateIfNotExists();
 
             // Create the operation.
-            TableQuery query = new TableQuery();
+            var query = new TableQuery();
             query.FilterString = TableQuery.GenerateFilterCondition(property, "eq", value);
             query.TakeCount = 100;
 
